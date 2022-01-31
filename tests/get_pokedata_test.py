@@ -1,10 +1,5 @@
-from fastapi_pokedex_api.api_app import get_pokedata
+from fastapi_pokedex_api.pokeapi_requests import get_pokedata
 from fastapi_pokedex_api.pokedex_schema import PokedexBase
-
-
-def test_get_pokedata_is_pokedexbase() -> None:
-    """Testing the pokeapi get request returns a pokedexbase"""
-    assert type(get_pokedata(poke_name="pikachu")) == PokedexBase
 
 
 # def test_get_pokedata_not_legendary() -> None:
