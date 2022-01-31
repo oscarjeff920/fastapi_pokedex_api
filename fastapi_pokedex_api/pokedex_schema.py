@@ -1,8 +1,8 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, typing
 
 
 class PokedexBase(BaseModel):
     name: str
     description: str
-    habitat: str
-    isLegendary: bool
+    habitat: typing.Optional[str]
+    is_legendary: bool
