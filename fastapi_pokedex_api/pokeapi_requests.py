@@ -11,9 +11,11 @@ def get_pokedata(ip_settings: PokeapiSettings, poke_name: str) -> PokedexBase:
     name = poke_name.lower()
     try:
         response = requests.get("{}{}".format(ip_settings.POKEAPI_IP, name))
+        response.raise_for_status()
     except requests.exceptions.HTTPError:
         raise fastapi.HTTPException(
-            status_code=404, detail="pokemon {} not found. Check spelling".format(name)
+            status_code=404,
+            detail="pokemon '{}' not found. Check spelling".format(name),
         )
 
     try:

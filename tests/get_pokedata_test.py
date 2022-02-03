@@ -21,7 +21,6 @@ def test_get_pokedata_not_jsonable() -> None:
 
 def test_get_pokedata_invalid_json() -> None:
     with requests_mock.Mocker() as m:
-        # TODO: work out how to pase json as response
         m.get(f"{POKEAPI_IP}pikachu", json={"not": "valid"})
         with pytest.raises(fastapi.HTTPException):
             get_pokedata(
