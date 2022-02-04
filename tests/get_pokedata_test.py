@@ -1,17 +1,38 @@
+import fastapi
+import pytest
+import requests
+import requests_mock
+
+from fastapi_pokedex_api.configs.pokeapi_config import PokeapiSettings
 from fastapi_pokedex_api.pokeapi_requests import get_pokedata
-from fastapi_pokedex_api.pokedex_schema import PokedexBase
+
+POKEAPI_IP = "https://pokeapi.co/api/v2/pokemon-species/"
 
 
-# def test_get_pokedata_not_legendary() -> None:
-#     """Testing the pokeapi get request for a non-legendary pokemon"""
-#     assert get_pokedata(poke_name="pikachu").is_legendary is True
-#
-#
-# def test_get_pokedata_legenday() -> None:
-#     """Testing the pokeapi get request for a legendary pokemon"""
-#     assert get_pokedata(poke_name="mewtwo").is_legendary is False
-#
-#
-# def test_get_pokedata_none_habitat() -> None:
-#     """Testing the pokeapi get request for a pokemon with None habitat"""
-#     assert get_pokedata(poke_name="piplup").habitat is None
+def test_get_pokedata_not_jsonable() -> None:
+    """Testing the pokeapi get request for a non-legendary pokemon"""
+    with requests_mock.Mocker() as m:
+        m.get(f"{POKEAPI_IP}pikachu", text="not json")
+        with pytest.raises(fastapi.HTTPException):
+            get_pokedata(
+                ip_settings=PokeapiSettings(POKEAPI_IP=POKEAPI_IP), poke_name="pikachu"
+            )
+
+
+def test_get_pokedata_invalid_json() -> None:
+    with requests_mock.Mocker() as m:
+        m.get(f"{POKEAPI_IP}pikachu", json={"not": "valid"})
+        with pytest.raises(fastapi.HTTPException):
+            get_pokedata(
+                ip_settings=PokeapiSettings(POKEAPI_IP=POKEAPI_IP), poke_name="pikachu"
+            )
+
+
+def test_get_pokedata_bad_status_code() -> None:
+    """Testing the pokeapi get request for a non-legendary pokemon"""
+    with requests_mock.Mocker() as m:
+        m.get(f"{POKEAPI_IP}pikachu", status_code=404)
+        with pytest.raises(fastapi.HTTPException):
+            get_pokedata(
+                ip_settings=PokeapiSettings(POKEAPI_IP=POKEAPI_IP), poke_name="pikachu"
+            )
