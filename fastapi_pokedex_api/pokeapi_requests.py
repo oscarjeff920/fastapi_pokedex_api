@@ -18,6 +18,11 @@ def get_pokedata(ip_settings: PokeapiSettings, poke_name: str) -> PokedexBase:
             status_code=404,
             detail="pokemon '{}' not found. Check spelling".format(name),
         )
+    except requests.ConnectionError:
+        raise fastapi.HTTPException(
+            status_code=501,
+            detail="Connection error, check internet connection and retry",
+        )
 
     try:
         details = response.json()

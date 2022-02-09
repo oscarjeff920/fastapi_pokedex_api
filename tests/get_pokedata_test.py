@@ -36,3 +36,12 @@ def test_get_pokedata_bad_status_code() -> None:
             get_pokedata(
                 ip_settings=PokeapiSettings(POKEAPI_IP=POKEAPI_IP), poke_name="pikachu"
             )
+
+
+def test_get_pokedata_failed_connection() -> None:
+    with requests_mock.Mocker() as m:
+        m.get(f"{POKEAPI_IP}pikachu", exc=requests.exceptions.ConnectionError)
+        with pytest.raises(fastapi.HTTPException):
+            get_pokedata(
+                ip_settings=PokeapiSettings(POKEAPI_IP=POKEAPI_IP), poke_name="pikachu"
+            )
