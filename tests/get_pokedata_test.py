@@ -1,9 +1,11 @@
+import os
+
 import fastapi
 import pytest
 import requests
 import requests_mock
 
-from fastapi_pokedex_api.configs.pokeapi_config import PokeapiSettings
+from fastapi_pokedex_api.configs.pokeapi_config import PokeapiSettings, get_pokeapi_ip
 from fastapi_pokedex_api.pokeapi_requests import get_pokedata
 
 POKEAPI_IP = "https://pokeapi.co/api/v2/pokemon-species/"
@@ -45,3 +47,8 @@ def test_get_pokedata_failed_connection() -> None:
             get_pokedata(
                 ip_settings=PokeapiSettings(POKEAPI_IP=POKEAPI_IP), poke_name="pikachu"
             )
+
+
+def test_pokeapi_ip_envvar() -> None:
+    os.environ["POKEAPI_IP"] = "https://pokeapi.co/api/v2/pokemon-species/"
+    assert get_pokeapi_ip().POKEAPI_IP == "https://pokeapi.co/api/v2/pokemon-species/"
